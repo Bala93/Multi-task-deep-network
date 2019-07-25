@@ -12,7 +12,7 @@ class DatasetImageMaskContourDist(Dataset):
     # dataset_type(cup,disc,polyp),
     # distance_type(dist_mask,dist_contour,dist_signed)
 
-    def __init__(self,file_names,dataset_type,distance_type):
+    def __init__(self,file_names,distance_type):
 
         self.file_names    = file_names
         self.distance_type = distance_type
