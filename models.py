@@ -135,7 +135,7 @@ class PsiNet(nn.Module):
             x_out3 = self.conv_final3(x_out3)
             x_out3 = F.sigmoid(x_out3)
         
-        return x_out1,x_out2,x_out3
+        return [x_out1,x_out2,x_out3]
 
 
 class UNet_DCAN(nn.Module):
@@ -221,7 +221,7 @@ class UNet_DCAN(nn.Module):
                 x_out2 = F.log_softmax(x_out2, dim=1)
 
         
-        return x_out1,x_out2
+        return [x_out1,x_out2]
 
 class UNet_DMTN(nn.Module):
     """
@@ -304,7 +304,7 @@ class UNet_DMTN(nn.Module):
             x_out2 = self.conv_final2(x_out2)
             x_out2 = F.sigmoid(x_out2)
         
-        return x_out1,x_out2
+        return [x_out1,x_out2]
 
 class UNet(nn.Module):
     """
@@ -331,12 +331,12 @@ class UNet(nn.Module):
         down_filter_sizes = [filters_base * s for s in down_filter_factors]
         up_filter_sizes = [filters_base * s for s in up_filter_factors]
         self.down, self.up = nn.ModuleList(), nn.ModuleList()
-        self.down.append(self.module(input_channels, down_filter_sizes[0], padding))
+        self.down.append(self.module(input_channels, down_filter_sizes[0]))
         for prev_i, nf in enumerate(down_filter_sizes[1:]):
-            self.down.append(self.module(down_filter_sizes[prev_i], nf, padding))
+            self.down.append(self.module(down_filter_sizes[prev_i], nf))
         for prev_i, nf in enumerate(up_filter_sizes[1:]):
             self.up.append(self.module(
-                down_filter_sizes[prev_i] + nf, up_filter_sizes[prev_i], padding))
+                down_filter_sizes[prev_i] + nf, up_filter_sizes[prev_i]))
         pool = nn.MaxPool2d(2, 2)
         pool_bottom = nn.MaxPool2d(bottom_s, bottom_s)
         upsample = nn.Upsample(scale_factor=2)
@@ -370,4 +370,4 @@ class UNet(nn.Module):
             if self.num_classes > 1:
                 x_out = F.log_softmax(x_out, dim=1)
                 
-        return x_out
+        return [x_out]

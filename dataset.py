@@ -57,7 +57,7 @@ def load_contour(path):
     return  torch.from_numpy(np.expand_dims(contour, 0)).long()
 
 
-def load_mat(path,distance_type):
+def load_distance(path,distance_type):
     
     if distance_type == 'dist_mask':
         path = path.replace('image','dist_mask').replace('jpg','mat')
