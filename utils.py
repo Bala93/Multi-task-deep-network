@@ -47,7 +47,7 @@ def visualize(device, epoch, model, data_loader, writer, val_batch_size, train=F
             outputs = model(inputs)
 
             output_mask = outputs[0].detach().cpu().numpy() 
-            output_final  = np.argmax(output_mask,axis=1).astype(float)*85
+            output_final  = np.argmax(output_mask,axis=1).astype(float)
 
             output_final = torch.from_numpy(output_final).unsqueeze(1)
             

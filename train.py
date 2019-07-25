@@ -15,7 +15,7 @@ from tensorboardX import SummaryWriter
 
 from utils import visualize,evaluate
 from losses import LossMulti
-from models import UNet,UNet_DCAN,UNet_DMTN,PsiNet
+from models import UNet,UNet_DCAN,UNet_DMTN,PsiNet,UNet_ConvMCD
 from dataset import DatasetImageMaskContourDist
 
 
@@ -82,7 +82,8 @@ def define_loss(loss_type,weights=[1,1,1]):
         criterion = LossDCAN(weights)
     if loss_type == 'dmtn':
         criterion = LossDMTN(weights)
-    if loss_type == 'psinet':
+    if loss_type == 'psinet' or loss_type == 'convmcd':
+        # Both psinet and convmcd uses same mask,contour and distance loss function
         criterion = LossPsiNet(weights)
 
     return criterion
@@ -98,6 +99,8 @@ def build_model(model_type):
         model = UNet_DMTN(num_classes=2)
     if model_type == 'psinet':
         model = PsiNet(num_classes=2)
+    if model_type == 'convmcd':
+        model = UNet_ConvMCD(num_classes=2)
   
     return model 
 
@@ -133,7 +136,7 @@ def train_model(model,targets,model_type,criterion,optimizer):
             loss.backward()
             optimizer.step()
 
-    if model_type == 'psinet':
+    if model_type == 'psinet' or model_type == 'convmcd':
 
         optimizer.zero_grad()
 
@@ -151,7 +154,7 @@ if __name__ == "__main__":
     train_path  = '/media/htic/NewVolume3/Balamurali/polyp-segmentation/train_valid/train/image/*.jpg'
     val_path  = '/media/htic/NewVolume3/Balamurali/polyp-segmentation/train_valid/test/image/*.jpg'
     object_type = 'polyp'#polyp
-    model_type = 'unet'
+    model_type = 'convmcd'
     distance_type = 'dist_mask' #dist_contour,dist_signed
     save_path = '/media/htic/NewVolume5/midl_experiments/nll/{}_{}/models_global'.format(object_type,model_type)
 
@@ -166,7 +169,8 @@ if __name__ == "__main__":
     CUDA_SELECT = "cuda:{}".format(cuda_no)
 
     #TODO:Change the summary writer snippet 
-    writer = SummaryWriter(log_dir='/media/htic/NewVolume5/midl_experiments/nll/{}_{}/models_global/summary'.format(object_type,model_type))
+    log_path = '/media/htic/NewVolume5/midl_experiments/nll/{}_{}/models_global/summary'.format(object_type,model_type)
+    writer = SummaryWriter(log_dir=log_path)
 
     logging.basicConfig(filename="log_{}_run_global.txt".format(object_type),
                             filemode='a',
