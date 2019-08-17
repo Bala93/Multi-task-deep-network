@@ -15,7 +15,7 @@
  
 An exhaustive list of packages used could be found in the *requirements.txt* file. Install the same using the following command:
 
-```
+```bash
  conda create --name <env> --file requirements.txt
 ```
 
@@ -24,14 +24,15 @@ Contour and Distance Maps are pre-computed. (Code to be added)
 
 #### Directory Structure
 Train and Test folders should contain the following structure:
-.
+
+```
 ├── contour 
 ├── dist_contour
 ├── dist_mask
 ├── dist_signed
 ├── image
 └── mask
-
+```
 [//]: # (## Sample Results)
 
 ## Citations
