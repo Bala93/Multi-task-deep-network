@@ -30,3 +30,63 @@ class LossMulti:
                 loss -= torch.log((intersection + eps) / (union - intersection + eps)) * self.jaccard_weight 
 
         return loss
+
+
+class LossUNet:
+
+    def __init__(self,weights=[1,1,1]):
+    
+        self.criterion = LossMulti(num_classes=2)
+   
+    def __call__(self,outputs,targets):
+ 
+        criterion = self.criterion(outputs,targets)
+
+        return criterion
+
+
+class LossDCAN:
+
+    def __init__(self,weights=[1,1,1]):
+    
+        self.criterion1 = LossMulti(num_classes=2)
+        self.criterion2 = LossMulti(num_classes=2)
+        self.weights = weights
+   
+    def __call__(self,outputs1,outputs2,targets1,targets2):
+       
+        criterion = self.weights[0] * self.criterion1(outputs1,targets1) + self.weights[1] * self.criterion2(outputs2,targets2)
+
+        return criterion
+
+class LossDMTN:
+
+    def __init__(self,weights=[1,1,1]):
+    
+        self.criterion1 = LossMulti(num_classes=2)
+        self.criterion2 = nn.MSELoss()
+        self.weights = weights
+   
+    def __call__(self,outputs1,outputs2,targets1,targets2):
+
+        criterion = self.weights[0] * self.criterion1(outputs1,targets1) + self.weights[1] * self.criterion2(outputs2,targets2)
+
+        return criterion
+
+class LossPsiNet:
+
+    def __init__(self,weights=[1,1,1]):
+
+        self.criterion1 = LossMulti(num_classes=2)
+        self.criterion2 = LossMulti(num_classes=2)
+        self.criterion3 = nn.MSELoss()
+        self.weights = weights 
+   
+    def __call__(self,outputs1,outputs2,outputs3,targets1,targets2,targets3):
+
+        criterion = self.weights[0] * self.criterion1(outputs1,targets1) + self.weights[1] * self.criterion2(outputs2,targets2) + self.weights[2] * self.criterion3(outputs3,targets3)
+
+        return criterion
+ 
+
+
