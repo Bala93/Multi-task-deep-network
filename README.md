@@ -26,12 +26,30 @@ Contour and Distance Maps are pre-computed. (Code to be added)
 Train and Test folders should contain the following structure:
 
 ```
-├── contour 
+├── contour
+    |-- 1.png
+    |-- 2.png
+    ...
 ├── dist_contour
+    |--1.mat 
+    |--2.mat
+    ...
 ├── dist_mask
+    |-- 1.mat
+    |-- 2.mat
+    ...
 ├── dist_signed
+    |-- 1.mat
+    |-- 2.mat
+    ...
 ├── image
+    |-- 1.jpg
+    |-- 2.jpg
+    ...
 └── mask
+    |-- 1.png
+    |-- 2.png
+    ...
 ```
 [//]: # (## Sample Results)
 
