@@ -59,7 +59,7 @@ def visualize(device, epoch, model, data_loader, writer, val_batch_size, train=F
                
             break
 
-def create_arg_parser():
+def create_train_arg_parser():
 
     parser = argparse.ArgumentParser(description = 'train setup for segmentation')
     parser.add_argument('--train_path',type=str,help='path to img jpg files')
@@ -76,6 +76,18 @@ def create_arg_parser():
     parser.add_argument('--save_path',type=str,help='Model save path.')
     
     return parser
+
+def create_validation_arg_parser():
+
+    parser = argparse.ArgumentParser(description = 'train setup for segmentation')
+    parser.add_argument('--model_type',type=str,help='select model type: unet,dcan,dmtn,psinet,convmcd')      
+    parser.add_argument('--val_path',type=str,help='path to img jpg files')
+    parser.add_argument('--model_file',type=str,default=None,help='model_file')
+    parser.add_argument('--cuda_no',type=int,default=0,help='cuda number')
+    parser.add_argument('--save_path',type=str,help='results save path.')
+    
+    return parser
+
 
 
 

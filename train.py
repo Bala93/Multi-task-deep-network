@@ -13,11 +13,10 @@ import torchvision
 import random
 from tensorboardX import SummaryWriter
 
-from utils import visualize,evaluate,create_arg_parser
+from utils import visualize,evaluate,create_train_arg_parser
 from losses import LossUNet,LossDCAN,LossDMTN,LossPsiNet
 from models import UNet,UNet_DCAN,UNet_DMTN,PsiNet,UNet_ConvMCD
 from dataset import DatasetImageMaskContourDist
-
 
 
 def define_loss(loss_type,weights=[1,1,1]):
@@ -98,7 +97,7 @@ def train_model(model,targets,model_type,criterion,optimizer):
 
 if __name__ == "__main__":
 
-    args = create_arg_parser().parse_args()
+    args = create_train_arg_parser().parse_args()
 
     CUDA_SELECT = "cuda:{}".format(args.cuda_no)
     log_path = args.save_path+'/summary'
