@@ -153,11 +153,6 @@ if __name__ == "__main__":
 
     args = create_arg_parser().parse_args()
 
-    #Print Args.
-    #for arg in vars(args):
-      
-    #  print(arg, getattr(args, arg))
-    
     CUDA_SELECT = "cuda:{}".format(args.cuda_no)
     log_path = args.save_path+'/summary'
     writer = SummaryWriter(log_dir=log_path)
