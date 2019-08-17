@@ -13,7 +13,7 @@ import torchvision
 import random
 from tensorboardX import SummaryWriter
 
-from utils import visualize,evaluate
+from utils import visualize,evaluate,create_arg_parser
 from losses import LossMulti
 from models import UNet,UNet_DCAN,UNet_DMTN,PsiNet,UNet_ConvMCD
 from dataset import DatasetImageMaskContourDist
@@ -151,40 +151,30 @@ def train_model(model,targets,model_type,criterion,optimizer):
 
 if __name__ == "__main__":
 
-    train_path  = '/media/htic/NewVolume3/Balamurali/polyp-segmentation/train_valid/train/image/*.jpg'
-    val_path  = '/media/htic/NewVolume3/Balamurali/polyp-segmentation/train_valid/test/image/*.jpg'
-    object_type = 'polyp'#polyp
-    model_type = 'convmcd'
-    distance_type = 'dist_mask' #dist_contour,dist_signed
-    save_path = '/media/htic/NewVolume5/midl_experiments/nll/{}_{}/models_global'.format(object_type,model_type)
+    args = create_arg_parser().parse_args()
 
-    use_pretrained = False
-    pretrained_model_path = '/media/htic/NewVolume5/midl_experiments/nll/prostate_unet/models_run3/40.pt'
-    #TODO:Add hyperparams to ArgParse. 
-    batch_size = 16
-    val_batch_size = 9 
-    no_of_epochs = 150
-
-    cuda_no = 0
-    CUDA_SELECT = "cuda:{}".format(cuda_no)
-
-    #TODO:Change the summary writer snippet 
-    log_path = '/media/htic/NewVolume5/midl_experiments/nll/{}_{}/models_global/summary'.format(object_type,model_type)
+    #Print Args.
+    #for arg in vars(args):
+      
+    #  print(arg, getattr(args, arg))
+    
+    CUDA_SELECT = "cuda:{}".format(args.cuda_no)
+    log_path = args.save_path+'/summary'
     writer = SummaryWriter(log_dir=log_path)
 
-    logging.basicConfig(filename="log_{}_run_global.txt".format(object_type),
+    logging.basicConfig(filename="".format(args.object_type),
                             filemode='a',
                             format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                             datefmt='%Y-%m-%d %H:%M',
                             level=logging.INFO)
-    logging.info('Model: UNet + Loss: FocalLoss(alpha=4) {}'.format(object_type)) 
+    logging.info('')
 
-    train_file_names = glob.glob(train_path)
+    train_file_names = glob.glob(os.path.join(args.train_path,'*.jpg'))
     random.shuffle(train_file_names)
-    val_file_names = glob.glob(val_path)
+    val_file_names = glob.glob(os.path.join(args.val_path,'*.jpg'))
 
     device = torch.device(CUDA_SELECT if torch.cuda.is_available() else "cpu")
-    model = build_model(model_type)
+    model = build_model(args.model_type)
 
     if torch.cuda.device_count() > 1:
       print("Let's use", torch.cuda.device_count(), "GPUs!")
@@ -194,21 +184,21 @@ if __name__ == "__main__":
 
     # To handle epoch start number and pretrained weight 
     epoch_start = '0'
-    if(use_pretrained):
-        print("Loading Model {}".format(os.path.basename(pretrained_model_path)))
-        model.load_state_dict(torch.load(pretrained_model_path))
-        epoch_start = os.path.basename(pretrained_model_path).split('.')[0]
+    if(args.use_pretrained):
+        print("Loading Model {}".format(os.path.basename(args.pretrained_model_path)))
+        model.load_state_dict(torch.load(args.pretrained_model_path))
+        epoch_start = os.path.basename(args.pretrained_model_path).split('.')[0]
         print(epoch_start)
 
     
-    trainLoader   = DataLoader(DatasetImageMaskContourDist(train_file_names,distance_type),batch_size=batch_size)
-    devLoader     = DataLoader(DatasetImageMaskContourDist(val_file_names,distance_type))
-    displayLoader = DataLoader(DatasetImageMaskContourDist(val_file_names,distance_type),batch_size=val_batch_size)
+    trainLoader   = DataLoader(DatasetImageMaskContourDist(train_file_names,args.distance_type),batch_size=args.batch_size)
+    devLoader     = DataLoader(DatasetImageMaskContourDist(val_file_names,args.distance_type))
+    displayLoader = DataLoader(DatasetImageMaskContourDist(val_file_names,args.distance_type),batch_size=args.val_batch_size)
 
     optimizer = Adam(model.parameters(), lr=1e-4)
-    criterion = define_loss(model_type)
+    criterion = define_loss(args.model_type)
 
-    for epoch in tqdm(range(int(epoch_start)+1,int(epoch_start)+1+no_of_epochs)):
+    for epoch in tqdm(range(int(epoch_start)+1,int(epoch_start)+1+args.num_epochs)):
 
         global_step = epoch * len(trainLoader)
         running_loss = 0.0
@@ -224,7 +214,7 @@ if __name__ == "__main__":
  
             targets   = [targets1,targets2,targets3]
 
-            loss = train_model(model,targets,model_type,criterion,optimizer)
+            loss = train_model(model,targets,args.model_type,criterion,optimizer)
 
             writer.add_scalar('loss', loss.item(), epoch)
 
@@ -236,11 +226,11 @@ if __name__ == "__main__":
 
             dev_loss,dev_time = evaluate(device, epoch, model, devLoader, writer)
             writer.add_scalar('loss_valid', dev_loss, epoch)
-            visualize(device, epoch, model, displayLoader, writer, val_batch_size)
+            visualize(device, epoch, model, displayLoader, writer, args.val_batch_size)
             print("Global Loss:{} Val Loss:{}".format(epoch_loss,dev_loss))
         else:
             print("Global Loss:{} ".format(epoch_loss))
         
         logging.info('epoch:{} train_loss:{} '.format(epoch,epoch_loss))
-        #if epoch%5 == 0:
-        #    torch.save(model.state_dict(),os.path.join(save_path,str(epoch)+'.pt'))
+        if epoch%5 == 0:
+            torch.save(model.state_dict(),os.path.join(args.save_path,str(epoch)+'.pt'))

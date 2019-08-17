@@ -6,8 +6,7 @@ import numpy as np
 import torchvision
 from torch.nn import functional as F
 import time
-
-
+import argparse
 
 def evaluate(device, epoch, model, data_loader, writer):
     model.eval()
@@ -59,3 +58,26 @@ def visualize(device, epoch, model, data_loader, writer, val_batch_size, train=F
                save_image(output_final, 'Prediction', val_batch_size)
                
             break
+
+def create_arg_parser():
+
+    parser = argparse.ArgumentParser(description = 'train setup for segmentation')
+    parser.add_argument('--train_path',type=str,help='path to img jpg files')
+    parser.add_argument('--val_path',type=str,help='path to img jpg files')
+    parser.add_argument('--model_type',type=str,help='select model type: unet,dcan,dmtn,psinet,convmcd')      
+    parser.add_argument('--object_type',type=str,help='Dataset.')      
+    parser.add_argument('--distance_type',type=str,default='dist_signed',help='select distance transform type - dist_mask,dist_contour,dist_signed')
+    parser.add_argument('--batch_size',type=int,default=4,help='train batch size')
+    parser.add_argument('--val_batch_size',type=int,default=4,help='validation batch size')
+    parser.add_argument('--num_epochs',type=int,default=150,help='number of epochs')
+    parser.add_argument('--cuda_no',type=int,default=0,help='cuda number')
+    parser.add_argument('--use_pretrained',type=bool,default=False,help='Load pretrained checkpoint.')
+    parser.add_argument('--pretrained_model_path',type=str,default=None,help='If use_pretrained is true, provide checkpoint.')
+    parser.add_argument('--save_path',type=str,help='Model save path.')
+    
+    return parser
+
+
+
+
+
