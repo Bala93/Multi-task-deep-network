@@ -53,6 +53,83 @@ Train and Test folders should contain the following structure:
 ```
 [//]: # (## Sample Results)
 
+## Train code 
+#### UNET
+```bash
+base_path=''
+train_path=${base_path}'/train/image' 
+val_path=${base_path}'/test/image' 
+model_type='unet'
+object_type='polyp'
+save_path=${base_path}'/models'
+python train.py --train_path ${train_path} 
+                --val_path ${val_path} 
+                --model_type ${model_type} 
+                --object_type ${object_type} 
+                --save_path ${save_path}
+```
+#### DCAN
+```bash
+base_path=''
+train_path=${base_path}'/train/image' 
+val_path=${base_path}'/test/image' 
+model_type='convmcd'
+object_type='dcan'
+save_path=${base_path}'/models'
+python train.py --train_path ${train_path} 
+                --val_path ${val_path} 
+                --model_type ${model_type} 
+                --object_type ${object_type} 
+                --save_path ${save_path}
+```
+
+#### DMTN
+```bash
+base_path=''
+train_path=${base_path}'/train/image' 
+val_path=${base_path}'/test/image' 
+model_type='dmtn'
+object_type='polyp'
+save_path=${base_path}'/models'
+python train.py --train_path ${train_path} 
+                --val_path ${val_path} 
+                --model_type ${model_type} 
+                --object_type ${object_type} 
+                --save_path ${save_path}
+```
+
+#### Psi-Net
+```bash
+base_path=''
+train_path=${base_path}'/train/image' 
+val_path=${base_path}'/test/image' 
+model_type='psinet'
+object_type='polyp'
+save_path=${base_path}'/models'
+python train.py --train_path ${train_path} 
+                --val_path ${val_path} 
+                --model_type ${model_type} 
+                --object_type ${object_type} 
+                --save_path ${save_path}
+```
+
+#### Conv-MCD
+```bash
+base_path=''
+train_path=${base_path}'/train/image' 
+val_path=${base_path}'/test/image' 
+model_type='convmcd'
+object_type='polyp'
+save_path=${base_path}'/models'
+python train.py --train_path ${train_path} 
+                --val_path ${val_path} 
+                --model_type ${model_type} 
+                --object_type ${object_type} 
+                --save_path ${save_path}
+```
+
+
+
 ## Citations
 If you use the Conv-MCD or Psi-Net code in your research, please consider citing the respective paper:
 ```
