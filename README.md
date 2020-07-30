@@ -20,7 +20,11 @@ An exhaustive list of packages used could be found in the *requirements.txt* fil
 ```
 
 #### Preprocessing
-Contour and Distance Maps are pre-computed. (Code to be added) 
+Contour and Distance Maps are pre-computed and can be obtained from binary mask. Sample matlab codes can be found here:
+
+* Contour: https://in.mathworks.com/help/images/ref/bwperim.html
+* Distance: https://in.mathworks.com/help/images/ref/bwdist.html
+
 
 #### Directory Structure
 Train and Test folders should contain the following structure:
